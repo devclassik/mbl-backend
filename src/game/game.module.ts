@@ -7,10 +7,11 @@ import { GameSessionPlayer } from './entities/game-player.entity';
 import { GameSessionQueue } from './entities/game-player-queue.entity';
 import { UsersModule } from 'src/users/users.module';
 import { Win } from './entities/win.entity';
+import { GameGateway } from './game.gateway';
 
 @Module({
   controllers: [GameController],
-  providers: [GameService],
+  providers: [GameService, GameGateway],
   imports: [TypeOrmModule.forFeature([
     Game,
     GameSessionPlayer,
