@@ -1,11 +1,17 @@
 import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { GameSessionPlayer } from 'src/game/entities/game-player.entity';
+import { Game } from 'src/game/entities/game.entity';
 import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
+    @InjectRepository(Game)
+    private readonly gamePlayerRepo: Repository<Game>,
     private readonly jwt: JwtService
   ) { }
 
@@ -29,11 +35,15 @@ export class AuthService {
     //   throw new UnauthorizedException('User is already in an active session');
     // }
 
-    const payload = { username: user.username, sub: user.id};
+    const payload = { username: user.username, sub: user.id };
     const accessToken = this.jwt.sign(payload, { secret: process.env.JWT_SECRET });
 
-    return { accessToken, user };
+    const totalGames = await this.gamePlayerRepo.count({
+      where: { createdByUserId: String(user.id) },
+    });
+
+    return { accessToken, user, totalGames };
   }
 
-  
+
 }

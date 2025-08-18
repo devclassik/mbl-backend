@@ -9,7 +9,9 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-    cors: { origin: '*' }, // change to your Next.js frontend URL in production
+    cors: { cors: { origin: "*" }, },
+    transports: ["websocket"], // force websocket
+
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
@@ -34,11 +36,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.to(payload.userId).emit('player-won', payload);
     }
 
-    // 🔹 Broadcast when a player joins
-    @OnEvent('game.player.joined')
-    handlePlayerJoined(payload: { sessionId: string; userId: string }) {
-        this.server.emit('player-joined', payload);
-    }
 
     // 🔹 Broadcast when a player leaves
     @OnEvent('game.player.left')

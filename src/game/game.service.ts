@@ -87,9 +87,13 @@ export class GameService {
       });
       await this.playerRepo.save(player);
 
+      this.eventEmitter.emit('game.player.joined', {
+        session,
+      });
+
       return { session, message: 'User successfully joined session' };
     } catch (error) {
-      console.error('❌ Error in joinOrCreateSession:', error);
+      console.error('Error in joinOrCreateSession:', error);
       throw error;
     }
   }
@@ -107,6 +111,7 @@ export class GameService {
         status: GameStatus.WAITING,
         maxPlayers: Number(process.env.MAX_PLAYERS) || 10,
         lastActivityTime: now,
+
       });
 
       session = await this.gameRepo.save(session);
@@ -150,7 +155,7 @@ export class GameService {
       return updatedSession;
     }
     catch (error) {
-      console.error('❌ Error creating session:', error);
+      console.error(' Error creating session:', error);
       throw error;
     }
   }
@@ -194,7 +199,7 @@ export class GameService {
         relations: ['players', 'queue'],
       });
     } catch (error) {
-      console.error('❌ Error in leaveSession:', error);
+      console.error('Error in leaveSession:', error);
       throw error;
     }
   }
@@ -226,7 +231,7 @@ export class GameService {
     }
 
     console.log(
-      `🏁 Session ${session.id} ended. Winning number: ${winningNumber}, Winners: ${winners.length}`,
+      ` Session ${session.id} ended. Winning number: ${winningNumber}, Winners: ${winners.length}`,
     );
   }
 
@@ -344,7 +349,7 @@ export class GameService {
   
       return await query.getRawMany(); // returns { userId, username, totalWins }
     } catch (error) {
-      console.error('❌ Error fetching top players:', error);
+      console.error('Error fetching top players:', error);
       throw new Error('Failed to fetch top players');
     }
   }
