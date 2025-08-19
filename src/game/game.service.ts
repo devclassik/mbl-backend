@@ -93,7 +93,6 @@ export class GameService {
 
       return { session, message: 'User successfully joined session' };
     } catch (error) {
-      console.error('Error in joinOrCreateSession:', error);
       throw error;
     }
   }
@@ -155,7 +154,6 @@ export class GameService {
       return updatedSession;
     }
     catch (error) {
-      console.error(' Error creating session:', error);
       throw error;
     }
   }
@@ -199,7 +197,6 @@ export class GameService {
         relations: ['players', 'queue'],
       });
     } catch (error) {
-      console.error('Error in leaveSession:', error);
       throw error;
     }
   }
@@ -230,9 +227,6 @@ export class GameService {
       await this.recordWin(Number(winner.userId))
     }
 
-    console.log(
-      ` Session ${session.id} ended. Winning number: ${winningNumber}, Winners: ${winners.length}`,
-    );
   }
 
   async recordWin(userId: number) {
@@ -245,7 +239,6 @@ export class GameService {
       return await this.winRepo.save(win);
 
     } catch (error) {
-      console.error(`❌ Failed to record win for user ${userId}:`, error);
       throw new InternalServerErrorException('Failed to record win');
     }
   }
@@ -263,7 +256,6 @@ export class GameService {
       // 1️⃣ Inactivity check → end after 2 min
       if (now.getTime() - session.lastActivityTime.getTime() > this.inactivityTimeoutMs) {
         await this.endSession(session);
-        console.warn(`💤 Inactive for 2min. Ending session ${session.id}`);
         continue;
       }
 
@@ -297,7 +289,6 @@ export class GameService {
     session.startTime = new Date();
     session.endTime = new Date(session.startTime.getTime() + 20 * 1000);
     await this.gameRepo.save(session);
-    console.log(`▶️ Session ${session.id} moved to ACTIVE`);
   }
 
   async getTopPlayers() {
@@ -349,7 +340,6 @@ export class GameService {
   
       return await query.getRawMany(); // returns { userId, username, totalWins }
     } catch (error) {
-      console.error('Error fetching top players:', error);
       throw new Error('Failed to fetch top players');
     }
   }

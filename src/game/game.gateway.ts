@@ -17,11 +17,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
     handleConnection(client: Socket) {
-        console.log(`🔌 Client connected: ${client.id}`);
+        console.log(`Client connected: ${client.id}`);
     }
 
     handleDisconnect(client: Socket) {
-        console.log(`❌ Client disconnected: ${client.id}`);
+        console.log(`Client disconnected: ${client.id}`);
     }
 
     // 🔹 Broadcast when a session ends
@@ -51,7 +51,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('joinGame')
     handleJoinGame(client: Socket, payload: { userId: string }) {
-        console.log(`🎮 Player ${payload.userId} joined`);
         this.server.emit('playerJoined', {
             userId: payload.userId,
             timestamp: new Date(),
